@@ -14,7 +14,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             overflow: hidden;
-            background: #1e3a8a;
+            background: transparent;
         }
         
         #container {
@@ -44,7 +44,7 @@
         }
         
         #slider {
-            width: 300px;
+            width: 600px;
             height: 4px;
             -webkit-appearance: none;
             appearance: none;
@@ -75,6 +75,7 @@
         }
         
         #label {
+            display: none;
             color: white;
             font-size: 14px;
             font-weight: 500;
@@ -143,7 +144,7 @@
         
         // Scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x1e3a8a); // Blue background
+        scene.background = null; // Transparent
         
         const camera = new THREE.PerspectiveCamera(
             45,
@@ -151,14 +152,16 @@
             0.1,
             1000
         );
-        camera.position.set(0.1, 0.1, 0.1);
+        camera.position.set(15, 15, 15);
         
         const renderer = new THREE.WebGLRenderer({
             canvas: document.getElementById('canvas'),
-            antialias: true
+            antialias: true,
+            alpha: true // Enable transparency
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000, 0); // Transparent background
         
         // Lights
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -222,10 +225,6 @@
                             }
                         });
                         
-                        const box = new THREE.Box3().setFromObject(model);
-                        const size = box.getSize(new THREE.Vector3());
-                        console.log('Model', index, 'size:', size.x, size.y, size.z);
-
                         model.visible = (index === 0); // Only first model visible
                         scene.add(model);
                         models.push(model);
