@@ -206,23 +206,26 @@
         controls.minDistance = 0.1;  // Allow zooming very close
         controls.maxDistance = 100;  // Allow zooming very far
         controls.autoRotate = false;
+        
         // Enable zoom only when Shift key is pressed
         let shiftPressed = false;
-
+        
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Shift') {
                 shiftPressed = true;
                 controls.enableZoom = true;
+                console.log('Shift pressed - zoom enabled');
             }
         });
-
+        
         window.addEventListener('keyup', (e) => {
             if (e.key === 'Shift') {
                 shiftPressed = false;
                 controls.enableZoom = false;
+                console.log('Shift released - zoom disabled');
             }
         });
-
+        
         controls.enableZoom = false;  // Start with zoom disabled
         
         // Model storage
@@ -253,13 +256,13 @@
             const maxSize = Math.max(size.x, size.y, size.z);
             const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
             const fitWidthDistance = fitHeightDistance / camera.aspect;
-            const distance = Math.max(fitHeightDistance, fitWidthDistance) * 0.9; // Changed from 1.8 to 0.9 (half the distance = 2x bigger appearance)
+            const distance = Math.max(fitHeightDistance, fitWidthDistance) * 0.9;
             
             const direction = new THREE.Vector3(1, 1, 1).normalize();
             camera.position.copy(center).add(direction.multiplyScalar(distance));
             
             // Pan view upward by shifting both camera and target down on Y-axis
-            const shiftAmount = maxSize * 0.2;  // Final value for perfect positioning
+            const shiftAmount = maxSize * 0.2;
             camera.position.y -= shiftAmount;
             const adjustedCenter = center.clone();
             adjustedCenter.y -= shiftAmount;
