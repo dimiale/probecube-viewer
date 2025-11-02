@@ -14,7 +14,7 @@
         body {
             font-family: Arial, sans-serif;
             overflow: hidden;
-            background: #f0f0f0;
+            background: transparent;
         }
         
         #container {
@@ -48,7 +48,7 @@
             height: 4px;
             -webkit-appearance: none;
             appearance: none;
-            background: #ddd;
+            background: #faf0ca;
             outline: none;
             border-radius: 2px;
         }
@@ -58,7 +58,7 @@
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #007bff;
+            background: #0d3b66;
             cursor: pointer;
             border-radius: 50%;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -67,7 +67,7 @@
         #slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: #007bff;
+            background: #0d3b66;
             cursor: pointer;
             border-radius: 50%;
             border: none;
@@ -122,14 +122,14 @@
         <canvas id="canvas"></canvas>
         
         <div id="loading">
-            <div>Loading models...</div>
+            <div>Geometry Viewer is getting ready</div>
             <div id="progress">
                 <div id="progress-bar"></div>
             </div>
         </div>
         
         <div id="controls" class="hidden">
-            <div id="label">State: 0.05</div>
+            <div id="label">Factor: 0.05</div>
             <input type="range" id="slider" min="0" max="38" value="0" step="1">
         </div>
     </div>
@@ -161,7 +161,7 @@
         
         // Scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xf5f5f5);
+        // Transparent background
         
         // Camera with adjusted near/far planes to prevent clipping
         const camera = new THREE.PerspectiveCamera(
@@ -174,10 +174,12 @@
         
         const renderer = new THREE.WebGLRenderer({
             canvas: document.getElementById('canvas'),
-            antialias: true
+            antialias: true,
+            alpha: true  // Enable transparency
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000, 0);  // Transparent clear color
         renderer.shadowMap.enabled = true;
         
         // Simple, strong lighting
@@ -327,7 +329,7 @@
             }
             
             currentModelIndex = newIndex;
-            label.textContent = `State: ${states[newIndex]}`;
+            label.textContent = `Factor: ${states[newIndex]}`;
         });
         
         // Animation loop
