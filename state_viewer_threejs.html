@@ -12,9 +12,9 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: Arial, sans-serif;
             overflow: hidden;
-            background: transparent;
+            background: #f0f0f0;
         }
         
         #container {
@@ -34,13 +34,13 @@
             bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px 40px;
             border-radius: 50px;
             display: flex;
             align-items: center;
             gap: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         #slider {
@@ -48,7 +48,7 @@
             height: 4px;
             -webkit-appearance: none;
             appearance: none;
-            background: rgba(255, 255, 255, 0.3);
+            background: #ddd;
             outline: none;
             border-radius: 2px;
         }
@@ -58,7 +58,7 @@
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #ff7f00;
+            background: #007bff;
             cursor: pointer;
             border-radius: 50%;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -67,7 +67,7 @@
         #slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: #ff7f00;
+            background: #007bff;
             cursor: pointer;
             border-radius: 50%;
             border: none;
@@ -75,9 +75,9 @@
         }
         
         #label {
-            color: white;
+            color: #333;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             min-width: 80px;
             text-align: center;
         }
@@ -87,23 +87,27 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: white;
+            color: #333;
             font-size: 18px;
             text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         #progress {
             width: 200px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.2);
+            background: #e0e0e0;
             border-radius: 2px;
-            margin-top: 10px;
+            margin-top: 15px;
             overflow: hidden;
         }
         
         #progress-bar {
             height: 100%;
-            background: #ff7f00;
+            background: #007bff;
             width: 0%;
             transition: width 0.3s;
         }
@@ -138,7 +142,7 @@
         // ========== CONFIGURATION - UPDATE THESE VALUES ==========
         const GITHUB_USERNAME = 'dimiale';
         const GITHUB_REPO = 'probecube-viewer';
-        const FOLDER_PATH = '211102_models';      // Your folder name
+        const FOLDER_PATH = '211102_models';
         // =========================================================
         
         const TOTAL_MODELS = 39;
@@ -157,48 +161,52 @@
         
         // Scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xf0f0f0);
+        scene.background = new THREE.Color(0xf5f5f5);
         
+        // Camera with adjusted near/far planes to prevent clipping
         const camera = new THREE.PerspectiveCamera(
-            45,
+            50,
             window.innerWidth / window.innerHeight,
-            0.1,
-            1000
+            0.01,  // Near plane - very close to prevent clipping when zooming
+            10000  // Far plane - very far
         );
-        camera.position.set(2, 2, 2);
+        camera.position.set(3, 3, 3);
         
         const renderer = new THREE.WebGLRenderer({
             canvas: document.getElementById('canvas'),
-            antialias: true,
-            alpha: true
+            antialias: true
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
         
-        // Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        // Simple, strong lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
         scene.add(ambientLight);
         
-        const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight1.position.set(10, 10, 5);
-        scene.add(directionalLight1);
+        const light1 = new THREE.DirectionalLight(0xffffff, 0.8);
+        light1.position.set(10, 10, 10);
+        scene.add(light1);
         
-        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-        directionalLight2.position.set(-10, -10, -5);
-        scene.add(directionalLight2);
+        const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+        light2.position.set(-10, 10, -10);
+        scene.add(light2);
         
-        // OrbitControls
+        const light3 = new THREE.DirectionalLight(0xffffff, 0.3);
+        light3.position.set(0, -10, 0);
+        scene.add(light3);
+        
+        // OrbitControls with adjusted settings
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.rotateSpeed = 0.5;
-        controls.autoRotate = false; // Set to true for auto-rotation
-        controls.autoRotateSpeed = 2.0;
+        controls.dampingFactor = 0.1;
+        controls.minDistance = 0.1;  // Allow zooming very close
+        controls.maxDistance = 100;  // Allow zooming very far
+        controls.autoRotate = false;
         
         // Model storage
         const models = [];
         let currentModelIndex = 0;
-        let boundingBox = null;
         
         // UI elements
         const slider = document.getElementById('slider');
@@ -224,16 +232,20 @@
             const maxSize = Math.max(size.x, size.y, size.z);
             const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
             const fitWidthDistance = fitHeightDistance / camera.aspect;
-            const distance = Math.max(fitHeightDistance, fitWidthDistance) * 1.5;
+            const distance = Math.max(fitHeightDistance, fitWidthDistance) * 1.8;
             
-            camera.position.set(
-                center.x + distance * 0.5,
-                center.y + distance * 0.5,
-                center.z + distance * 0.5
-            );
+            const direction = new THREE.Vector3(1, 1, 1).normalize();
+            camera.position.copy(center).add(direction.multiplyScalar(distance));
+            camera.lookAt(center);
             
             controls.target.copy(center);
             controls.update();
+            
+            console.log('Camera fitted to model:', {
+                center: center,
+                size: size,
+                distance: distance
+            });
         }
         
         function loadModel(index) {
@@ -245,6 +257,22 @@
                     url,
                     (gltf) => {
                         const model = gltf.scene;
+                        
+                        // Apply default material to any mesh without material
+                        model.traverse((child) => {
+                            if (child.isMesh) {
+                                // Keep original material if it exists, otherwise use default
+                                if (!child.material || child.material.color.r === 0 && child.material.color.g === 0 && child.material.color.b === 0) {
+                                    child.material = new THREE.MeshStandardMaterial({
+                                        color: 0xaaaaaa,
+                                        metalness: 0.2,
+                                        roughness: 0.7,
+                                        side: THREE.DoubleSide  // Render both sides
+                                    });
+                                }
+                            }
+                        });
+                        
                         model.visible = (index === 0);
                         scene.add(model);
                         models.push(model);
@@ -262,7 +290,9 @@
                     undefined,
                     (error) => {
                         console.error('Error loading model:', filename, error);
-                        reject(error);
+                        loadedCount++;
+                        updateProgress();
+                        resolve(); // Continue even if one fails
                     }
                 );
             });
@@ -282,7 +312,6 @@
                 console.log('All models loaded successfully!');
             } catch (error) {
                 console.error('Error loading models:', error);
-                loading.innerHTML = '<div>Error loading models. Check console for details.</div>';
             }
         }
         
