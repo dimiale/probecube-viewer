@@ -206,19 +206,24 @@
         controls.minDistance = 0.1;
         controls.maxDistance = 100;
         controls.autoRotate = false;
-        controls.enableZoom = false;  // Disable by default
+        controls.enableZoom = false;  // Completely disable OrbitControls zoom
         
-        // Override zoom behavior - only allow when Shift is pressed
+        // Manual zoom with Shift key requirement
         renderer.domElement.addEventListener('wheel', (e) => {
             if (e.shiftKey) {
-                controls.enableZoom = true;
-                console.log('Zooming with Shift');
-            } else {
-                controls.enableZoom = false;
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Zoom blocked - Shift not pressed');
+                
+                // Manual zoom calculation
+                const zoomSpeed = 0.1;
+                const delta = e.deltaY > 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
+                
+                camera.position.sub(controls.target).multiplyScalar(delta).add(controls.target);
+                controls.update();
+                
+                console.log('Zooming with Shift');
             }
+            // If no Shift, do nothing - let page scroll naturally
         }, { passive: false });
         
         // Model storage
