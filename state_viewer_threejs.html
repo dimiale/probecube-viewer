@@ -241,7 +241,7 @@
             camera.position.copy(center).add(direction.multiplyScalar(distance));
             
             // Pan view upward by shifting both camera and target down on Y-axis
-            const shiftAmount = maxSize * 0.15;  // Changed from 0.3 to 0.15 (50% of previous shift)
+            const shiftAmount = maxSize * 0.2;  // Final value for perfect positioning
             camera.position.y -= shiftAmount;
             const adjustedCenter = center.clone();
             adjustedCenter.y -= shiftAmount;
