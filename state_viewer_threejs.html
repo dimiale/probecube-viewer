@@ -298,18 +298,15 @@
             });
         }
         
-        // Load all models
+        // Load all models sequentially to maintain order
         async function loadAllModels() {
-            const promises = [];
-            for (let i = 0; i < TOTAL_MODELS; i++) {
-                promises.push(loadModel(i));
-            }
-            
             try {
-                await Promise.all(promises);
+                for (let i = 0; i < TOTAL_MODELS; i++) {
+                    await loadModel(i);
+                }
                 loading.classList.add('hidden');
                 controlsUI.classList.remove('hidden');
-                console.log('All models loaded successfully!');
+                console.log('All models loaded successfully in correct order!');
             } catch (error) {
                 console.error('Error loading models:', error);
             }
