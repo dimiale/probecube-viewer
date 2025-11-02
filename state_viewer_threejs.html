@@ -206,6 +206,7 @@
         controls.minDistance = 0.1;  // Allow zooming very close
         controls.maxDistance = 100;  // Allow zooming very far
         controls.autoRotate = false;
+        controls.enableZoom = true;  // TEST: Enable zoom always to see if it works
         
         // Enable zoom only when Shift key is pressed
         let shiftPressed = false;
@@ -226,7 +227,7 @@
             }
         });
         
-        controls.enableZoom = false;  // Start with zoom disabled
+        //controls.enableZoom = false;  // Start with zoom disabled
         
         // Model storage
         const models = [];
