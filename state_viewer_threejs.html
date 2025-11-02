@@ -239,6 +239,10 @@
             
             const direction = new THREE.Vector3(1, 1, 1).normalize();
             camera.position.copy(center).add(direction.multiplyScalar(distance));
+            
+            // Shift camera downward (negative Z) to move model upward in frame
+            camera.position.z -= maxSize * 0.3;  // Adjust 0.3 value if you need more/less shift
+            
             camera.lookAt(center);
             
             controls.target.copy(center);
