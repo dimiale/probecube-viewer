@@ -58,7 +58,7 @@
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #0d3b66;
+            background: #f95738;
             cursor: pointer;
             border-radius: 50%;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -67,7 +67,7 @@
         #slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: #0d3b66;
+            background: #f95738;
             cursor: pointer;
             border-radius: 50%;
             border: none;
@@ -259,6 +259,9 @@
                     url,
                     (gltf) => {
                         const model = gltf.scene;
+                        
+                        // Scale model 2x to make it appear bigger
+                        model.scale.set(2, 2, 2);
                         
                         // Apply default material to any mesh without material
                         model.traverse((child) => {
