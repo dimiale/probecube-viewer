@@ -206,7 +206,22 @@
         controls.minDistance = 0.1;  // Allow zooming very close
         controls.maxDistance = 100;  // Allow zooming very far
         controls.autoRotate = false;
-        
+        // Enable zoom only when Shift key is pressed
+        let shiftPressed = false;
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Shift') {
+                shiftPressed = true;
+                controls.enableZoom = true;
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'Shift') {
+                shiftPressed = false;
+                controls.enableZoom = false;
+            }
+        });
 
         controls.enableZoom = false;  // Start with zoom disabled
         
