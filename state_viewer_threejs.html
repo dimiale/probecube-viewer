@@ -240,9 +240,11 @@
             const direction = new THREE.Vector3(1, 1, 1).normalize();
             camera.position.copy(center).add(direction.multiplyScalar(distance));
             
-            // Shift look-at point upward on Y-axis to move model up in frame
+            // Pan view upward by shifting both camera and target down on Y-axis
+            const shiftAmount = maxSize * 0.3;
+            camera.position.y -= shiftAmount;
             const adjustedCenter = center.clone();
-            adjustedCenter.y += maxSize * 0.3;
+            adjustedCenter.y -= shiftAmount;
             
             camera.lookAt(adjustedCenter);
             
