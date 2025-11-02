@@ -240,12 +240,13 @@
             const direction = new THREE.Vector3(1, 1, 1).normalize();
             camera.position.copy(center).add(direction.multiplyScalar(distance));
             
-            // Shift camera downward (negative Z) to move model upward in frame
-            camera.position.z -= maxSize * 0.3;  // Adjust 0.3 value if you need more/less shift
+            // Shift look-at point upward to move model up in frame
+            const adjustedCenter = center.clone();
+            adjustedCenter.z += maxSize * 0.3;
             
-            camera.lookAt(center);
+            camera.lookAt(adjustedCenter);
             
-            controls.target.copy(center);
+            controls.target.copy(adjustedCenter);
             controls.update();
             
             console.log('Camera fitted to model:', {
