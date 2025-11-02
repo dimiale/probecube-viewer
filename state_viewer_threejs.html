@@ -94,10 +94,11 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 300px;
         }
         
         #progress {
-            width: 200px;
+            width: 100%;
             height: 4px;
             background: #e0e0e0;
             border-radius: 2px;
@@ -234,7 +235,7 @@
             const maxSize = Math.max(size.x, size.y, size.z);
             const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
             const fitWidthDistance = fitHeightDistance / camera.aspect;
-            const distance = Math.max(fitHeightDistance, fitWidthDistance) * 1.8;
+            const distance = Math.max(fitHeightDistance, fitWidthDistance) * 0.9; // Changed from 1.8 to 0.9 (half the distance = 2x bigger appearance)
             
             const direction = new THREE.Vector3(1, 1, 1).normalize();
             camera.position.copy(center).add(direction.multiplyScalar(distance));
@@ -259,9 +260,6 @@
                     url,
                     (gltf) => {
                         const model = gltf.scene;
-                        
-                        // Scale model 2x to make it appear bigger
-                        model.scale.set(2, 2, 2);
                         
                         // Apply default material to any mesh without material
                         model.traverse((child) => {
