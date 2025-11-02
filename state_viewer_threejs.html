@@ -203,31 +203,23 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.1;
-        controls.minDistance = 0.1;  // Allow zooming very close
-        controls.maxDistance = 100;  // Allow zooming very far
+        controls.minDistance = 0.1;
+        controls.maxDistance = 100;
         controls.autoRotate = false;
-        controls.enableZoom = true;  // TEST: Enable zoom always to see if it works
+        controls.enableZoom = false;  // Disable by default
         
-        // Enable zoom only when Shift key is pressed
-        let shiftPressed = false;
-        
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Shift') {
-                shiftPressed = true;
+        // Override zoom behavior - only allow when Shift is pressed
+        renderer.domElement.addEventListener('wheel', (e) => {
+            if (e.shiftKey) {
                 controls.enableZoom = true;
-                console.log('Shift pressed - zoom enabled');
-            }
-        });
-        
-        window.addEventListener('keyup', (e) => {
-            if (e.key === 'Shift') {
-                shiftPressed = false;
+                console.log('Zooming with Shift');
+            } else {
                 controls.enableZoom = false;
-                console.log('Shift released - zoom disabled');
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Zoom blocked - Shift not pressed');
             }
-        });
-        
-        //controls.enableZoom = false;  // Start with zoom disabled
+        }, { passive: false });
         
         // Model storage
         const models = [];
