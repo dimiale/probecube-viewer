@@ -130,7 +130,6 @@
         </div>
         
         <div id="controls" class="hidden">
-            <div id="label">Factor: 0.05</div>
             <input type="range" id="slider" min="0" max="38" value="0" step="1">
         </div>
     </div>
@@ -356,7 +355,6 @@
             }
             
             currentModelIndex = newIndex;
-            label.textContent = `Factor: ${states[newIndex]}`;
         });
         
         // Animation loop
