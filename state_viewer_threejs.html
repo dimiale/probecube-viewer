@@ -94,7 +94,13 @@
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid transparent;  /* CHANGE THIS */
+            background-image: 
+                linear-gradient(white, white),
+                linear-gradient(135deg, #f0b455 0%, #f95738 100%);  /* ADD THIS */
+            background-origin: padding-box, border-box;  /* ADD THIS */
+            background-clip: padding-box, border-box;  /* ADD THIS */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);  /* CHANGE THIS - stronger shadow with blur */
             min-width: 300px;
         }
         
