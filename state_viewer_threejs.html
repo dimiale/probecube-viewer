@@ -35,14 +35,14 @@
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.9);
-            padding: 20px 20px;
+            padding: calc(min(3.33vw, 20px));  /* CHANGE - scales but caps at 20px */
             border-radius: 50px;
             display: flex;
             align-items: center;
             gap: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        
+                
         #slider {
             width: 80vw;
             max-width: 600px;
