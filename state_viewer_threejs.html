@@ -221,23 +221,55 @@
         controls.autoRotate = false;
         controls.enableZoom = false;  // Completely disable OrbitControls zoom
         
-        // Manual zoom with Shift key requirement
-        renderer.domElement.addEventListener('wheel', (e) => {
-            if (e.shiftKey) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Manual zoom calculation
-                const zoomSpeed = 0.1;
-                const delta = e.deltaY > 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
-                
-                camera.position.sub(controls.target).multiplyScalar(delta).add(controls.target);
-                controls.update();
-                
-                console.log('Zooming with Shift');
-            }
-            // If no Shift, do nothing - let page scroll naturally
-        }, { passive: false });
+        // Mouse wheel: scroll = rotate, shift+scroll = zoom
+renderer.domElement.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.shiftKey) {
+        // ZOOM with Shift+Scroll
+        const zoomSpeed = 0.1;
+        const delta = e.deltaY > 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
+        camera.position.sub(controls.target).multiplyScalar(delta).add(controls.target);
+        controls.update();
+    } else {
+        // ROTATE with Scroll only
+        const rotationStep = (5 * Math.PI) / 180; // 5 degrees per step
+        const direction = e.deltaY > 0 ? 1 : -1;
+        models.forEach(model => {
+            model.rotation.z += rotationStep * direction;
+        });
+    }
+}, { passive: false });
+
+        // Touch scroll rotation for mobile (smooth based on finger movement)
+        let lastTouchY = 0;
+        let isTouching = false;
+        
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            isTouching = true;
+            lastTouchY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        renderer.domElement.addEventListener('touchmove', (e) => {
+            if (!isTouching) return;
+            
+            const currentTouchY = e.touches[0].clientY;
+            const deltaY = lastTouchY - currentTouchY; // Positive when scrolling down
+            
+            // Rotate proportionally to distance moved
+            const rotationAmount = (deltaY * 0.01 * Math.PI) / 180;
+            
+            models.forEach(model => {
+                model.rotation.z += rotationAmount;
+            });
+            
+            lastTouchY = currentTouchY;
+        }, { passive: true });
+
+renderer.domElement.addEventListener('touchend', () => {
+    isTouching = false;
+}, { passive: true });
         
         // Model storage
         const models = [];
