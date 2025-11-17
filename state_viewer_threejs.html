@@ -27,6 +27,17 @@
             width: 100%;
             height: 100%;
             display: block;
+            pointer-events: none;  /* Canvas ignoriert ALLE Touch-Events */
+        }
+        
+        #touch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;  /* Overlay fängt Touch-Events ab */
+            z-index: 1;
         }
         
         #controls {
@@ -41,6 +52,8 @@
             align-items: center;
             gap: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;  /* Über dem overlay */
+            pointer-events: auto;
         }
                 
         #slider {
@@ -108,6 +121,8 @@
             background-clip: padding-box, border-box;
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             min-width: 300px;
+            z-index: 100;
+            pointer-events: auto;
         }
         
         #progress {
@@ -134,6 +149,7 @@
 <body>
     <div id="container">
         <canvas id="canvas"></canvas>
+        <div id="touch-overlay"></div>
         
         <div id="loading">
             <div> Left Click = Rotate </div>
@@ -232,11 +248,14 @@
             controls.enableZoom = false;
             controls.enablePan = false;
             
+            // Get the touch overlay element
+            const touchOverlay = document.getElementById('touch-overlay');
+            
             // Custom two-finger touch handling ONLY
             let touchStartDistance = 0;
             let touchStartPositions = [];
             
-            renderer.domElement.addEventListener('touchstart', (e) => {
+            touchOverlay.addEventListener('touchstart', (e) => {
                 // Only handle 2-finger touches, ignore everything else
                 if (e.touches.length !== 2) {
                     return; // Let single finger pass through
@@ -257,7 +276,7 @@
                 touchStartDistance = Math.sqrt(dx * dx + dy * dy);
             }, { passive: false });
             
-            renderer.domElement.addEventListener('touchmove', (e) => {
+            touchOverlay.addEventListener('touchmove', (e) => {
                 // Only handle 2-finger touches, ignore everything else
                 if (e.touches.length !== 2) {
                     return; // Let single finger pass through
@@ -309,7 +328,7 @@
                 controls.update();
             }, { passive: false });
             
-            renderer.domElement.addEventListener('touchend', (e) => {
+            touchOverlay.addEventListener('touchend', (e) => {
                 touchStartDistance = 0;
             }, { passive: false });
             
