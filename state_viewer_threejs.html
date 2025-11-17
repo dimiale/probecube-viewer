@@ -220,6 +220,21 @@
         controls.maxDistance = 100;
         controls.autoRotate = false;
         controls.enableZoom = false;  // Completely disable OrbitControls zoom
+
+        // Disable touch controls on mobile to allow scrolling
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                   || window.innerWidth <= 768;
+        }
+        
+        if (isMobileDevice()) {
+            controls.enableRotate = false;
+            controls.enablePan = false;
+            renderer.domElement.style.pointerEvents = 'none';
+            
+            // Re-enable pointer events for the slider
+            document.getElementById('controls').style.pointerEvents = 'auto';
+        }
         
         // Manual zoom with Shift key requirement
         renderer.domElement.addEventListener('wheel', (e) => {
