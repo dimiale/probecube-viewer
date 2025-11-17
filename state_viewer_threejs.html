@@ -36,6 +36,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            pointer-events: none;  /* Standard: aus */
         }
         
         #controls {
@@ -232,7 +233,8 @@
         controls.minDistance = 0.1;
         controls.maxDistance = 100;
         controls.autoRotate = false;
-        controls.enableZoom = false;
+        controls.enableZoom = false;  // We use custom zoom
+        controls.enablePan = false;   // Disable panning
         
         // Mobile touch controls - 2 fingers only
         function isMobileDevice() {
@@ -241,14 +243,12 @@
         }
         
         if (isMobileDevice()) {
-            // Disable pointer events on canvas for mobile only
+            // Mobile: Canvas ignores all touches, overlay captures 2-finger only
             renderer.domElement.style.pointerEvents = 'none';
             document.getElementById('touch-overlay').style.pointerEvents = 'auto';
             
-            // Disable default OrbitControls touch behavior
+            // Disable OrbitControls for mobile
             controls.enableRotate = false;
-            controls.enableZoom = false;
-            controls.enablePan = false;
             
             // Get the touch overlay element
             const touchOverlay = document.getElementById('touch-overlay');
@@ -335,12 +335,11 @@
             }, { passive: false });
             
         } else {
-            // PC - enable pointer events on canvas, disable overlay
-            renderer.domElement.style.pointerEvents = 'auto';
-            document.getElementById('touch-overlay').style.pointerEvents = 'none';
+            // PC: Enable OrbitControls rotation with mouse
+            controls.enableRotate = true;  // Enable mouse rotation!
             
-            // PC - keep panning disabled but rotation/zoom enabled
-            controls.enablePan = false;
+            // Overlay off for PC
+            document.getElementById('touch-overlay').style.pointerEvents = 'none';
         }
         
         // Manual zoom with Shift key requirement (PC only)
